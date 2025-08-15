@@ -124,6 +124,7 @@ dependencies = [
     "tencentcloud-sdk-python==3.0.1336",
     
     "oracledb>=3.2.0",
+    "mcp==1.12.3",
 
 ]
 readme = "README.md"
