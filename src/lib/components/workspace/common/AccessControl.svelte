@@ -124,9 +124,9 @@
 						onChange(accessControl);
 					}}
 				>
-					<option class=" text-gray-700" value="private" selected>{$i18n.t('Private')}</option>
+					<option class=" text-gray-700" value="private">{$i18n.t('Private')}</option>
 					{#if allowPublic}
-						<option class=" text-gray-700" value="public" selected>{$i18n.t('Public')}</option>
+						<option class=" text-gray-700" value="public">{$i18n.t('Public')}</option>
 					{/if}
 				</select>
 

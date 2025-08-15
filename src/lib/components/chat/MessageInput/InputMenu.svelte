@@ -3,6 +3,7 @@
 	import { getContext, onMount, tick } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { flyAndScale } from '$lib/utils/transitions';
+	import type { Readable } from 'svelte/store';
 
 	import { config, user, tools as _tools, mobile, knowledge, chats } from '$lib/stores';
 	import { createPicker } from '$lib/utils/google-drive-picker';
@@ -25,7 +26,7 @@
 	import Notes from './InputMenu/Notes.svelte';
 	import Knowledge from './InputMenu/Knowledge.svelte';
 
-	const i18n = getContext('i18n');
+	const i18n = getContext<Readable<any>>('i18n');
 
 	export let files = [];
 
@@ -54,8 +55,9 @@
 		return /android|iphone|ipad|ipod|windows phone/i.test(userAgent);
 	};
 
-	const handleFileChange = (event) => {
-		const inputFiles = Array.from(event.target?.files);
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement | null;
+		const inputFiles = Array.from(input?.files ?? []);
 		if (inputFiles && inputFiles.length > 0) {
 			console.log(inputFiles);
 			inputFilesHandler(inputFiles);

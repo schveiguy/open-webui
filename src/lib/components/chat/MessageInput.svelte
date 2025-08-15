@@ -53,6 +53,7 @@
 	import VoiceRecording from './MessageInput/VoiceRecording.svelte';
 	import FilesOverlay from './MessageInput/FilesOverlay.svelte';
 	import ToolServersModal from './ToolServersModal.svelte';
+	import MCPToolsSelector from './MCPToolsSelector.svelte';
 
 	import RichTextInput from '../common/RichTextInput.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
@@ -1479,6 +1480,16 @@
 														</span>
 													</button>
 												</Tooltip>
+											{/if}
+
+											<!-- MCP Tools Selector -->
+											{#if $config?.features?.enable_mcp ?? false}
+												<MCPToolsSelector 
+													bind:selectedToolIds 
+													on:change={(e) => {
+														selectedToolIds = e.detail.selectedToolIds;
+													}} 
+												/>
 											{/if}
 
 											{#each selectedFilterIds as filterId}
