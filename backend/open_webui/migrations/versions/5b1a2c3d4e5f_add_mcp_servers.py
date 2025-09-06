@@ -2,7 +2,7 @@
 
 Revision ID: 5b1a2c3d4e5f
 Revises: d31026856c01
-Create Date: 2025-08-10 00:00:00.000000
+Create Date: 2025-09-05 00:00:00.000000
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ from open_webui.internal.db import JSONField
 
 # revision identifiers, used by Alembic.
 revision = "5b1a2c3d4e5f"
-down_revision = "d31026856c01"
+down_revision = "3af16a1c9fb6"
 branch_labels = None
 depends_on = None
 
