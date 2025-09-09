@@ -1026,10 +1026,11 @@ TOOL_SERVER_CONNECTIONS = PersistentConfig(
 )
 
 # New: MCP feature flag (backward-compatible, disabled by default)
+# NOTE: enabled by default to work around bug with MCP not working immedaitely after throwing the switch
 MCP_ENABLED = PersistentConfig(
     "MCP_ENABLED",
     "mcp.enable",
-    False,
+    True,
 )
 
 # MCP Server Allowlist (list of allowed domains for MCP servers)
