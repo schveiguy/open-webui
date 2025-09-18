@@ -717,6 +717,8 @@ class MCPOAuthManager:
             except Exception as e:
                 log.warning(f"Failed to fetch resource metadata: {e}")
 
+        # Strip any trailing /
+        auth_server_url = auth_server_url.rstrip("/")
         # Method 2: Try standard OAuth Authorization Server Metadata (RFC 8414)
         metadata_url = f"{auth_server_url}/.well-known/oauth-authorization-server"
         try:
