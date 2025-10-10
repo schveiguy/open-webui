@@ -361,6 +361,7 @@ class OAuthClientManager:
             ):
                 kwargs["code_challenge_method"] = "S256"
 
+        log.debug(f"kwargs for {client_id} are {kwargs}")
         self.clients[client_id] = {
             "client": self.oauth.register(**kwargs),
             "client_info": oauth_client_info,
