@@ -1,0 +1,83 @@
+name: Build production image
+
+# Fork-only workflow. Builds a single linux/amd64 image from the `production`
+# branch and publishes it to this repository's GitHub Container Registry:
+#   ghcr.io/<owner>/open-webui:production
+#   ghcr.io/<owner>/open-webui:git-<short sha>
+#
+# Kept separate from upstream's docker.yaml so upstream merges don't conflict.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - production
+
+concurrency:
+  group: production-image-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Prepare environment
+        run: echo "FULL_IMAGE_NAME=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "${GITHUB_ENV}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v5.1.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.12.0
+
+      # Same tweak as upstream CI: the frontend build needs a bigger Node heap.
+      - name: Prepare CI Dockerfile
+        run: |
+          awk '
+            /^FROM --platform=\$BUILDPLATFORM node:/ {
+              print
+              print "ENV NODE_OPTIONS=\"--max-old-space-size=12288\""
+              next
+            }
+            { print }
+          ' Dockerfile > "${RUNNER_TEMP}/Dockerfile"
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3.7.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker image
+        id: meta
+        uses: docker/metadata-action@v5.10.0
+        with:
+          images: ${{ env.FULL_IMAGE_NAME }}
+          tags: |
+            type=raw,value=production
+            type=sha,prefix=git-
+          flavor: |
+            latest=false
+
+      - name: Build and push
+        uses: docker/build-push-action@v5.4.0
+        with:
+          context: .
+          file: ${{ runner.temp }}/Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.FULL_IMAGE_NAME }}:cache-production
+          cache-to: type=registry,ref=${{ env.FULL_IMAGE_NAME }}:cache-production,mode=max
+          build-args: |
+            BUILD_HASH=${{ github.sha }}
+            BUILD_CHANNEL=production
